@@ -1,0 +1,56 @@
+package com.example.demo.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.example.demo.User;
+import com.example.demo.dao.UserRepo;
+
+@Controller
+public class UserController {
+
+	@Autowired
+	UserRepo repo;
+
+	@RequestMapping("/")
+	public String home() {
+		return "home.jsp";
+	}
+	
+//	@DeleteMapping("/user{id}")
+//	public String deleteUser (@PathVariable int id)
+//	{
+//		User u=repo.getOne(id);
+//		return "deleted";
+//		
+//	}
+
+	@RequestMapping("/addUser")
+	public String addUser(User user) {
+
+		repo.save(user);
+		return "home.jsp";
+	}
+	@RequestMapping("/getUser")
+	public ModelAndView getUser(@RequestParam int id) {
+		ModelAndView mv=new ModelAndView("showUser.jsp");
+		User user=repo.findById(id).orElse(new User());
+		mv.addObject(user);
+		return mv;
+		
+	}
+	
+	@RequestMapping("/users")
+	@ResponseBody
+	public String getUser() {
+	
+		return repo.findAll().toString();
+		
+	}
+}
